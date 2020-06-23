@@ -17,7 +17,7 @@ from urllib.error import URLError
 
 # This is a known good revision of LLVM for building the kernel
 # To bump this, run 'PATH_OVERRIDE=<path_to_updated_toolchain>/bin kernel/build.sh --allyesconfig'
-GOOD_REVISION = 'ebad678857a94c32ce7b6931e9c642b32d278b67'
+GOOD_REVISION = '8a5aea7b50429cd4a459511286a7a9f1a7f4f5e2'
 
 
 class Directories:
@@ -134,7 +134,8 @@ def parse_parameters(root_folder):
                         "Android clang version..."). Useful when reverting or applying patches on top
                         of upstream clang to differentiate a toolchain built with this script from
                         upstream clang or to distinguish a toolchain built with this script from the
-                        system's clang. Defaults to STRIX.
+                        system's clang. Defaults to STRIX, can be set to an empty string to
+                        override this and have no vendor in the version string.
 
                         """),
                         type=str,
@@ -861,17 +862,26 @@ def invoke_cmake(args, dirs, env_vars, stage):
 
 def print_install_info(install_folder):
     """
-    Prints out where the LLVM toolchain is installed and how to add to PATH
+    Prints out where the LLVM toolchain is installed, how to add to PATH, and version information
     :param install_folder: Where the LLVM toolchain is installed
     :return:
     """
-    bin_folder = install_folder.joinpath("bin").as_posix()
+    bin_folder = install_folder.joinpath("bin")
     print("\nLLVM toolchain installed to: %s" % install_folder.as_posix())
     print("\nTo use, either run:\n")
-    print("    $ export PATH=%s:${PATH}\n" % bin_folder)
+    print("    $ export PATH=%s:${PATH}\n" % bin_folder.as_posix())
     print("or add:\n")
-    print("    PATH=%s:${PATH}\n" % bin_folder)
+    print("    PATH=%s:${PATH}\n" % bin_folder.as_posix())
     print("to the command you want to use this toolchain.\n")
+
+    clang = bin_folder.joinpath("clang")
+    lld = bin_folder.joinpath("ld.lld")
+    if clang.exists() or lld.exists():
+        print("Version information:\n")
+        for binary in [clang, lld]:
+            if binary.exists():
+                subprocess.run([binary, "--version"], check=True)
+                print()
 
 
 def invoke_ninja(args, dirs, stage):
@@ -934,7 +944,8 @@ def generate_pgo_profiles(args, dirs):
     # Run kernel/build.sh
     subprocess.run([
         dirs.root_folder.joinpath("kernel", "build.sh"), '-b',
-        dirs.build_folder, '-t', args.targets
+        dirs.build_folder, '--pgo',
+        str(args.pgo).lower(), '-t', args.targets
     ],
                    check=True,
                    cwd=dirs.build_folder.as_posix())
