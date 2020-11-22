@@ -103,15 +103,15 @@ def create_targets(targets):
     """
     targets_dict = {
         "arm": "arm-linux-gnueabi",
-        "aarch64": "aarch64-linux-gnu",
-        "mips": "mips-linux-gnu",
-        "mipsel": "mipsel-linux-gnu",
-        "powerpc64": "powerpc64-linux-gnu",
-        "powerpc64le": "powerpc64le-linux-gnu",
-        "powerpc": "powerpc-linux-gnu",
-        "riscv64": "riscv64-linux-gnu",
-        "s390x": "s390x-linux-gnu",
-        "x86_64": "x86_64-linux-gnu"
+        "aarch64": "aarch64-linux-gnu"
+        #"mips": "mips-linux-gnu",
+        #"mipsel": "mipsel-linux-gnu",
+        #"powerpc64": "powerpc64-linux-gnu",
+        #"powerpc64le": "powerpc64le-linux-gnu",
+        #"powerpc": "powerpc-linux-gnu",
+        #"riscv64": "riscv64-linux-gnu",
+        #"s390x": "s390x-linux-gnu",
+        #"x86_64": "x86_64-linux-gnu"
     }
 
     targets_set = set()

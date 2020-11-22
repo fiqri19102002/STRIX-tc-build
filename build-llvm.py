@@ -307,7 +307,7 @@ def parse_parameters(root_folder):
 
                         """),
                         type=str,
-                        default="AArch64;ARM;Mips;PowerPC;RISCV;SystemZ;X86")
+                        default="AArch64;ARM")
     clone_options.add_argument("--use-good-revision",
                                help=textwrap.dedent("""\
                         By default, the script updates LLVM to the latest tip of tree revision, which may at times be
